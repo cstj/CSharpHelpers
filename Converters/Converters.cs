@@ -5,7 +5,7 @@ using System.Text;
 using System.Windows.Data;
 using System.Globalization;
 
-namespace GlobalHelpers.Converters
+namespace HelpersLibrary.Converters
 {
     [ValueConversion(typeof(bool), typeof(bool))]
     public class InverseBooleanConverter : IValueConverter

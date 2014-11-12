@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace GlobalHelpers
+namespace HelpersLibrary
 {
     public static class Functions
     {

@@ -6,7 +6,7 @@ using GalaSoft.MvvmLight;
 using GalaSoft.MvvmLight.Command;
 using System.Collections.ObjectModel;
 
-namespace GlobalHelpers.DataTypes
+namespace HelpersLibrary.DataTypesMVVMLight
 {
     /// <summary>
     /// Event Args to hold Item

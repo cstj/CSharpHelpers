@@ -3,9 +3,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
-namespace DataTypesGeneric
+namespace HelpersLibrary.DataTypesGeneric
 {
-    class DataTypesGeneric
-    {
-    }
 }

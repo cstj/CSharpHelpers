@@ -6,7 +6,7 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Threading;
 
-namespace GlobalHelpers.Behaviours
+namespace HelpersLibrary.WPFHelpers.Behaviours
 {
     /// <summary>
     /// Attach to use a close signal
