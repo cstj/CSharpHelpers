@@ -5,18 +5,18 @@ using System.Runtime.CompilerServices;
 using System.Threading;
 using System.Windows.Threading;
 using System.Collections.ObjectModel;
+using System.Collections.Concurrent;
 
 namespace Helpers.MVVMHelpers
 {
 
-    public class ObservableCollectionGUISafe<T> : ObservableCollection<T>
+    public class ObservableConcurrentDictionary<TKey, TVal> : ConcurrentDictionary<TKey, TVal>, INotifyCollectionChanged, INotifyPropertyChanged
     {
         public enum LockTypeEnum
         {
             SpinWait,
             Lock
         }
-
         private bool _lockObjWasTaken;
         private readonly object _lockObj;
         private int _lock; // 0=unlocked		1=locked
@@ -30,9 +30,10 @@ namespace Helpers.MVVMHelpers
             }
         }
 
-        public ObservableCollectionGUISafe(LockTypeEnum lockType)
+        public ObservableConcurrentDictionary(LockTypeEnum lockType)
             : base()
-		{
+        {
+            ConcurrentDictionary<TKey, TVal> t = new ConcurrentDictionary<TKey, TVal>();
 			_lockType = lockType;
 			_lockObj = new object();
 		}
