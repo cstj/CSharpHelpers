@@ -1,0 +1,3 @@
+[submodule "CSharpHelperLibraries"]
+	path = CSharpHelperLibraries
+	url = http://soev00311/gitbucket/git/cstjohn/CSharpHelperLibraries.git
