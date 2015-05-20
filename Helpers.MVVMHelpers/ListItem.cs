@@ -175,7 +175,7 @@ namespace Helpers.MVVMHelpers
         }
         #endregion
         #region Value Property
-        public const string ValueName = "Item";
+        public const string ValueName = "Value";
         private T _Value;
         public T Value
         {
