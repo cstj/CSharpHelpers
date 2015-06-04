@@ -25,14 +25,19 @@ namespace Helpers.MVVMHelpers
         #region Property Change Handleing
         public event PropertyChangedEventHandler PropertyChanged;
 
-        protected void OnPropertyChanged(string name)
+        protected void OnPropertyChanged(object sender, string name)
         {
             VerifyPropertyName(name);
             PropertyChangedEventHandler handler = PropertyChanged;
             if (handler != null)
             {
-                handler(this, new PropertyChangedEventArgs(name));
+                handler(sender, new PropertyChangedEventArgs(name));
             }
+        }
+
+        protected void OnPropertyChanged(string name)
+        {
+            OnPropertyChanged(this, name);
         }
 
         public void VerifyPropertyName(string propertyName)
@@ -193,40 +198,35 @@ namespace Helpers.MVVMHelpers
         #endregion
         #region Children Property
         public const string ChildrenName = "Children";
-        private ICollection<ListItem<T>> _Children;
-        public ICollection<ListItem<T>> Children
+        private ObservableCollection<ListItem<T>> _Children;
+        public ObservableCollection<ListItem<T>> Children
         {
             get { return _Children; }
             set
             {
                 if (_Children == value) return;
-                //Unsubscribe from events of children
-                if (_Children != null) foreach (var c in Children) c.PropertyChanged -= Children_PropertyChanged;
+                if (_Children != null)
+                {
+                    foreach (var i in _Children) i.PropertyChanged -= OnChildPropertyChanged;
+                    Children.CollectionChanged -= Children_CollectionChanged;
+                }
                 _Children = value;
-                //Subscribe to new child events
-                foreach (var c in Children) c.PropertyChanged += Children_PropertyChanged;
+                foreach (var i in _Children) i.PropertyChanged += OnChildPropertyChanged;
+                Children.CollectionChanged += Children_CollectionChanged;
                 OnPropertyChanged(ChildrenName);
             }
         }
 
-        public event System.ComponentModel.PropertyChangedEventHandler ChildChanged;
-        protected virtual void OnChildChanged(System.ComponentModel.PropertyChangedEventArgs e, object sender)
+        private void OnChildPropertyChanged(object sender, PropertyChangedEventArgs e)
         {
-            if (ChildChanged != null)
-            {
-                ChildChanged(sender, e);
-            }
+            OnPropertyChanged(sender, ChildrenName);
         }
 
-        /// <summary>
-        /// Handler for when a child changes.  Raises the property changed event for the next level up.  Inception style
-        /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
-        private void Children_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
+        public void Children_CollectionChanged(object sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
         {
-            System.ComponentModel.PropertyChangedEventArgs ags = new System.ComponentModel.PropertyChangedEventArgs(ChildrenName);
-            OnChildChanged(ags, sender);
+            if (e.OldItems != null) foreach (var i in e.OldItems.Cast<ListItem<T>>()) i.PropertyChanged -= PropertyChanged;
+            if (e.NewItems != null) foreach (var i in e.NewItems.Cast<ListItem<T>>()) i.PropertyChanged += PropertyChanged;
+            OnPropertyChanged(ChildrenName);
         }
         #endregion
         #region FontWeight Property
