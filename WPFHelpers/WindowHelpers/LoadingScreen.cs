@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
-namespace WPFHelpers.WindowHelpers
+namespace Helpers.WPFHelpers.WindowHelpers
 {
     public class LoadingScreen<T> : IDisposable where T : System.Windows.Window
     {
