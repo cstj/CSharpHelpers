@@ -20,12 +20,17 @@ namespace Helpers.MVVMHelpers
         }
     }
 
+    /// <summary>
+    /// A List Item for use in WPF data binding.  It stores a number of usefull attributes such as selection, font weight etc.
+    /// It also is capable of being used in tree's using the children attribute.
+    /// </summary>
+    /// <typeparam name="T">The type of object that this list item contains.</typeparam>
     public class ListItem<T> : INotifyPropertyChanged
     {
         #region Property Change Handleing
-        public event PropertyChangedEventHandler PropertyChanged;
+        public virtual event PropertyChangedEventHandler PropertyChanged;
 
-        protected void OnPropertyChanged(object sender, string name)
+        protected virtual void OnPropertyChanged(object sender, string name)
         {
             VerifyPropertyName(name);
             PropertyChangedEventHandler handler = PropertyChanged;
@@ -40,7 +45,7 @@ namespace Helpers.MVVMHelpers
             OnPropertyChanged(this, name);
         }
 
-        public void VerifyPropertyName(string propertyName)
+        public virtual void VerifyPropertyName(string propertyName)
         {
             var myType = this.GetType();
             if (myType.GetProperty(propertyName) == null)
@@ -196,6 +201,7 @@ namespace Helpers.MVVMHelpers
             }
         }
         #endregion
+
         #region Children Property
         public const string ChildrenName = "Children";
         private ObservableCollection<ListItem<T>> _Children;
@@ -217,7 +223,7 @@ namespace Helpers.MVVMHelpers
             }
         }
 
-        private void OnChildPropertyChanged(object sender, PropertyChangedEventArgs e)
+        protected virtual void OnChildPropertyChanged(object sender, PropertyChangedEventArgs e)
         {
             OnPropertyChanged(sender, ChildrenName);
         }
@@ -333,6 +339,77 @@ namespace Helpers.MVVMHelpers
             OnClick(new ListItemEventArgs<T>(this));
         }
         #endregion
+        #endregion
+    }
+
+    /// <summary>
+    /// A List Item for use in WPF data binding.  It stores a number of usefull attributes such as selection, font weight etc.
+    /// It also is capable of being used in tree's using the children attribute.
+    /// This list item also stores extra data associated wiht the item.
+    /// </summary>
+    /// <typeparam name="T">The type of object that this list item contains.</typeparam>
+    /// <typeparam name="ExtraT">The type of extra data associated wiht this list item.</typeparam>
+    public class ListItem<T, ExtraT> : ListItem<T>
+    {
+        public override event PropertyChangedEventHandler PropertyChanged;
+
+        protected override void OnPropertyChanged(object sender, string name)
+        {
+            VerifyPropertyName(name);
+            PropertyChangedEventHandler handler = PropertyChanged;
+            if (handler != null)
+            {
+                handler(sender, new PropertyChangedEventArgs(name));
+            }
+        }
+
+        public override void VerifyPropertyName(string propertyName)
+        {
+            if (propertyName != ChildrenName)
+            {
+                var myType = this.GetType();
+                if (myType.GetProperty(propertyName) == null)
+                {
+                    throw new ArgumentException("Property not found", propertyName);
+                }
+            }
+        }
+
+        #region ExtraData Property
+        public const string ExtraDataName = "ExtraData";
+        private ExtraT _ExtraData;
+        public ExtraT ExtraData
+        {
+            get { return _ExtraData; }
+            set
+            {
+                if (_ExtraData != null)
+                {
+                    if (_ExtraData.Equals(value)) return;
+                }
+                _ExtraData = value;
+                OnPropertyChanged(ExtraDataName);
+            }
+        }
+
+        private ObservableCollection<ListItem<T, ExtraT>> _Children;
+        new public ObservableCollection<ListItem<T, ExtraT>> Children
+        {
+            get { return _Children; }
+            set
+            {
+                if (_Children == value) return;
+                if (_Children != null)
+                {
+                    foreach (var i in _Children) i.PropertyChanged -= OnChildPropertyChanged;
+                    Children.CollectionChanged -= Children_CollectionChanged;
+                }
+                _Children = value;
+                foreach (var i in _Children) i.PropertyChanged += OnChildPropertyChanged;
+                Children.CollectionChanged += Children_CollectionChanged;
+                OnPropertyChanged(ChildrenName);
+            }
+        }
         #endregion
     }
 }
