@@ -29,10 +29,21 @@ namespace Helpers.MVVMHelpers
             Visible,
         }
 
+        public static ConcurrentDictionary<WPFFondWeights, string> WPFFondWeightsStateToString;
+        public static ConcurrentDictionary<string, WPFFondWeights> WPFFondWeightsFromString;
+        public enum WPFFondWeights
+        {
+            [Description("Normal")]
+            Normal,
+            [Description("Bold")]
+            Bold,
+        }
+
         static Enums()
         {
             InitEnumDict<WPFCursorState>(ref WPFCursorStateToString, ref WPFCursorStateFromString);
             InitEnumDict<WPFVisibility>(ref WPFVisibilityStateToString, ref WPFVisibilityFromString);
+            InitEnumDict<WPFFondWeights>(ref WPFFondWeightsStateToString, ref WPFFondWeightsFromString);
         }
 
         public static void InitEnumDict<T>(ref ConcurrentDictionary<T, string> toString, ref ConcurrentDictionary<string, T> formString)

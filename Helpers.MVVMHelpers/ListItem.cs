@@ -61,6 +61,7 @@ namespace Helpers.MVVMHelpers
             //Connect Click Commands / Events etc
             DoubleClickCommand = new RelayCommand(() => DoubleClickExecute());
             ClickCommand = new RelayCommand(() => ClickExecute());
+            FontWeight = Helpers.MVVMHelpers.Enums.WPFFondWeightsStateToString[Enums.WPFFondWeights.Normal];
         }
         #endregion
 
