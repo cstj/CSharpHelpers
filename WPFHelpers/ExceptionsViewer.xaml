@@ -4,6 +4,7 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         Title="ExceptionsViewer" Height="454" Width="654"
         DataContext="{Binding RelativeSource={RelativeSource Self}}"
+        Topmost="True" Icon="res/error.png"
         >
     <Grid>
         <Grid.RowDefinitions>
