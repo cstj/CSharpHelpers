@@ -51,6 +51,7 @@
     <Reference Include="WindowsBase" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="AutoGreyImage.cs" />
     <Compile Include="Behaviours.cs" />
     <Compile Include="ExceptionsViewer.xaml.cs">
       <DependentUpon>ExceptionsViewer.xaml</DependentUpon>
