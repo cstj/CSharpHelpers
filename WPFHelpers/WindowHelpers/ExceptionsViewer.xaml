@@ -1,10 +1,10 @@
-﻿<Window x:Class="Helpers.WPFHelpers.WindowsHelpers.ExceptionsViewer"
+﻿<Window x:Class="Helpers.WPFHelpers.WindowHelpers.ExceptionsViewer"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:local="clr-namespace:Helpers.WPFHelpers.XAMLHelpers"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         Title="ExceptionsViewer" Height="454" Width="654"
         DataContext="{Binding RelativeSource={RelativeSource Self}}"
-        Topmost="True" Icon="res/error.png"
+        Topmost="True" Icon="/Helpers.WPFHelpers;component/res/error.png"
         >
     <Grid>
         <Grid.RowDefinitions>

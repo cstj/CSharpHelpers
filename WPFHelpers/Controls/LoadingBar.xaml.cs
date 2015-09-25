@@ -22,24 +22,33 @@ namespace Helpers.WPFHelpers.Controls
     {
         public LoadingBar()
         {
-            InitializeComponent();
-            LayoutRoot.DataContext = this;
+            try
+            {
+                InitializeComponent();
+                if (System.ComponentModel.DesignerProperties.GetIsInDesignMode(this)) return;
+                LayoutRoot.DataContext = this;
+            }
+            catch
+            {
+
+            }
         }
 
         public string LineOne
         {
-            get { return (string)GetValue(LineOneProperty); }
+            get { return GetValue(LineOneProperty).ToString(); }
             set { SetValue(LineOneProperty, value); }
         }
 
         public static readonly DependencyProperty LineOneProperty =
-            DependencyProperty.Register("LineOne", typeof(string),
-            typeof(LoadingBar), new PropertyMetadata("Line One"));
+            DependencyProperty.Register("LineOne", 
+                typeof(string),
+                typeof(LoadingBar), new PropertyMetadata("Line One"));
 
 
         public string LineTwo
         {
-            get { return (string)GetValue(LineTwoProperty); }
+            get { return GetValue(LineTwoProperty).ToString(); }
             set { SetValue(LineTwoProperty, value); }
         }
 
@@ -48,57 +57,72 @@ namespace Helpers.WPFHelpers.Controls
             typeof(LoadingBar), new PropertyMetadata("Line Two"));
 
 
-        public double PgsMax
+        public object PgsMax
         {
-            get { return Convert.ToDouble(GetValue(PgsMaxProperty)); }
+            get { return GetValue(PgsMaxProperty); }
             set { SetValue(PgsMaxProperty, value); }
         }
 
         public static readonly DependencyProperty PgsMaxProperty =
-            DependencyProperty.Register("PgsMax", typeof(double),
+            DependencyProperty.Register("PgsMax",
+            typeof(object),
             typeof(LoadingBar),
-            new PropertyMetadata((double)100, new PropertyChangedCallback((o, e) =>
+            new PropertyMetadata((object)100.0, 
+            new PropertyChangedCallback((o, e) =>
             {
-                ((LoadingBar)o).PgsBar.Maximum = Convert.ToDouble(e.NewValue);
+                LoadingBar bar = (LoadingBar)o;
+                double value = ReturnValue<double>(e.NewValue, new Func<object,double>(val => Convert.ToDouble(val)), 0);
+                bar.PgsBar.Maximum = value;
             })));
 
 
-        public double PgsCurrent
+        public object PgsCurrent
         {
-            get { return Convert.ToDouble(GetValue(PgsCurrentProperty)); }
+            get { return GetValue(PgsCurrentProperty); }
             set { SetValue(PgsCurrentProperty, value); }
         }
 
         public static readonly DependencyProperty PgsCurrentProperty =
             DependencyProperty.Register(
                 "PgsCurrent",
-                typeof(double),
+                typeof(object),
                 typeof(LoadingBar),
-                new PropertyMetadata((double)1, new PropertyChangedCallback((o, e) =>
+                new PropertyMetadata((object)1.0, 
+                new PropertyChangedCallback((o, e) =>
                 {
-                    ((LoadingBar)o).PgsBar.Value = Convert.ToDouble(e.NewValue);
+                    LoadingBar bar = (LoadingBar)o;
+                    double value = ReturnValue<double>(e.NewValue, new Func<object,double>(val => Convert.ToDouble(val)), 0);
+                    bar.PgsBar.Value = value;
                 }
             )));
 
-        public double LabelFontSize
+        public object LabelFontSize
         {
-            get { return Convert.ToDouble(GetValue(LabelFontSizeProperty)); }
+            get { return GetValue(LabelFontSizeProperty); }
             set { SetValue(LabelFontSizeProperty, value); }
         }
 
         public static readonly DependencyProperty LabelFontSizeProperty =
             DependencyProperty.Register(
                 "LabelFontSize",
-                typeof(double),
+                typeof(object),
                 typeof(LoadingBar),
-                new PropertyMetadata((double)12, new PropertyChangedCallback((o, e) =>
+                new PropertyMetadata((object)12.0, 
+                new PropertyChangedCallback((o, e) =>
                 {
                     LoadingBar bar = (LoadingBar)o;
-                    double fontSize = Convert.ToDouble(e.NewValue);
-                    if (fontSize < 1) fontSize = 12;
+                    double fontSize = ReturnValue<double>(e.NewValue, new Func<object,double>(val => Convert.ToDouble(val)), 12);
+
                     bar.LineOneBlock.FontSize = fontSize;
                     bar.LineTwoBlock.FontSize = fontSize;
                 }
             )));
+
+        private static T ReturnValue<T>(object value, Func<object, T> converter, T defaultValue)
+        {
+            if (value == null) return defaultValue;
+            if (value is IConvertible) return converter(value);
+            return defaultValue;
+        }
     }
 }

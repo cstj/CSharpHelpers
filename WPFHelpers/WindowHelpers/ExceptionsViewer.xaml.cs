@@ -15,7 +15,7 @@ using System.Windows.Shapes;
 using System.Collections;
 
 
-namespace Helpers.WPFHelpers.WindowsHelpers
+namespace Helpers.WPFHelpers.WindowHelpers
 {
     /// <summary>
     /// Interaction logic for ExceptionsViewer.xaml
