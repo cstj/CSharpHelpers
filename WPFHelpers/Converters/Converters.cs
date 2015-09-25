@@ -5,7 +5,7 @@ using System.Text;
 using System.Windows.Data;
 using System.Globalization;
 
-namespace HelpersLibrary.Converters
+namespace Helpers.WPFHelpers.Converters
 {
     [ValueConversion(typeof(bool), typeof(bool))]
     public class InverseBooleanConverter : IValueConverter

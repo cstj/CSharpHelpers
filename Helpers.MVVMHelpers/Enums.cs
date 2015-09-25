@@ -46,17 +46,17 @@ namespace Helpers.MVVMHelpers
             InitEnumDict<WPFFondWeights>(ref WPFFondWeightsStateToString, ref WPFFondWeightsFromString);
         }
 
-        public static void InitEnumDict<T>(ref ConcurrentDictionary<T, string> toString, ref ConcurrentDictionary<string, T> formString)
+        public static void InitEnumDict<T>(ref ConcurrentDictionary<T, string> toString, ref ConcurrentDictionary<string, T> fromString)
         {
             toString = new ConcurrentDictionary<T, string>();
-            formString = new ConcurrentDictionary<string, T>();
+            fromString = new ConcurrentDictionary<string, T>();
             foreach (T e in Enum.GetValues(typeof(T)).Cast<T>())
             {
                 string d;
                 var dAttr = (DescriptionAttribute[])e.GetType().GetField(e.ToString()).GetCustomAttributes(typeof(DescriptionAttribute), false);
                 d = dAttr.Length > 0 ? dAttr[0].Description : e.ToString();
-                toString.TryAdd(e, d);
-                formString.TryAdd(d, e);
+                if (toString != null) toString.TryAdd(e, d);
+                if (fromString != null) fromString.TryAdd(d, e);
             }
         }
     }

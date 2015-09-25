@@ -8,7 +8,7 @@ using System.Windows;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 
-namespace Helpers.WPFHelpers.XAMLHelpers
+namespace Helpers.WPFHelpers.Controls
 {
     /// <summary>
     /// Class used to have an image that is able to be gray when the control is not enabled.

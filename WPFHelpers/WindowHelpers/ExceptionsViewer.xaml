@@ -1,4 +1,4 @@
-﻿<Window x:Class="WPFHelpers.ExceptionsViewer"
+﻿<Window x:Class="Helpers.WPFHelpers.WindowsHelpers.ExceptionsViewer"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:local="clr-namespace:Helpers.WPFHelpers.XAMLHelpers"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
