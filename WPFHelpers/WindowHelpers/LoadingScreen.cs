@@ -20,12 +20,27 @@ namespace Helpers.WPFHelpers.WindowHelpers
 
         System.Threading.Thread thread;
         string _ThreadName;
+
+        /// <summary>
         /// Creates a loading window on an off thread wihtout blocking.
         /// </summary>
         /// <param name="owner">Parent window to open in the center of.</param>
         public LoadingScreen(System.Windows.Window owner)
         {
+            _ThreadName = "Splash Screen";
             _owner = owner;
+            CreateLoadingWindow();
+        }
+
+        /// <summary>
+        /// Creates a loading window on an off thread wihtout blocking.
+        /// </summary>
+        /// <param name="owner">Parent window to open in the center of.</param>
+        /// <param name="ThreadName">The name of the off thread.</param>
+        public LoadingScreen(System.Windows.Window owner, string ThreadName)
+        {
+            _owner = owner;
+            _ThreadName = ThreadName;
             CreateLoadingWindow();
         }
 
@@ -115,6 +130,8 @@ namespace Helpers.WPFHelpers.WindowHelpers
                     System.Windows.Threading.Dispatcher.Run();
 
                 });
+                //Name our thread.  Make it background
+                thread.Name = _ThreadName;
                 thread.IsBackground = true;
                 //Set its apartment state to STA (So we can make a GUI on this thread).
                 thread.SetApartmentState(System.Threading.ApartmentState.STA);
