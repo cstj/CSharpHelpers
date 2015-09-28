@@ -5,6 +5,12 @@ using System.Text;
 
 namespace Helpers.WPFHelpers.WindowHelpers
 {
+    /// <summary>
+    /// This function loads a splash screen and hands back control to the caller.  
+    /// It the splash can then be closed by calling CloseLoadingWindow.
+    /// It takes a WPF window as a splash.  Usually a window with no Chrome or interactable controls.
+    /// </summary>
+    /// <typeparam name="T">WPF window to load as a splash.</typeparam>
     public class LoadingScreen<T> : IDisposable where T : System.Windows.Window
     {
         T windowLoading;
@@ -12,6 +18,11 @@ namespace Helpers.WPFHelpers.WindowHelpers
         private bool disposed = false;
         private System.Windows.Window _owner;
 
+        System.Threading.Thread thread;
+        string _ThreadName;
+        /// Creates a loading window on an off thread wihtout blocking.
+        /// </summary>
+        /// <param name="owner">Parent window to open in the center of.</param>
         public LoadingScreen(System.Windows.Window owner)
         {
             _owner = owner;
@@ -25,6 +36,10 @@ namespace Helpers.WPFHelpers.WindowHelpers
             GC.SuppressFinalize(this);
         }
 
+        /// <summary>
+        /// Dispose Implementation.
+        /// </summary>
+        /// <param name="disposing"></param>
         protected virtual void Dispose(bool disposing)
         {
             if (disposed) return;
@@ -36,21 +51,32 @@ namespace Helpers.WPFHelpers.WindowHelpers
             disposed = true;
         }
 
+        /// <summary>
+        /// Destructor.  Fires disposal.
+        /// </summary>
         ~LoadingScreen()
         {
             Dispose(false);
         }
         #endregion
 
+        /// <summary>
+        /// Returns an instance of hte splash window.
+        /// </summary>
+        /// <returns></returns>
         private T GetInstance()
         {
             return (T)Activator.CreateInstance(typeof(T));
         }
 
-        public void CreateLoadingWindow()
+        /// <summary>
+        /// Creates the splash window it self.  Non blocking.
+        /// </summary>
+        private void CreateLoadingWindow()
         {
             if (windowLoading == null)
             {
+                //If we have a parent get its center.
                 double ParentHor = 0;
                 double ParentVer = 0;
                 if (_owner != null)
@@ -58,11 +84,18 @@ namespace Helpers.WPFHelpers.WindowHelpers
                     ParentHor = _owner.Left + (_owner.Width / 2);
                     ParentVer = _owner.Top + (_owner.Height / 2);
                 }
+                //Create an event to trigger when the dispatcher is ready (so we can hand back 
+                //control to the calling function and know our loading screen will close when 
+                //instructed).
                 System.Threading.ManualResetEvent reset = new System.Threading.ManualResetEvent(false);
                 reset.Reset();
-                System.Threading.Thread t = new System.Threading.Thread(() =>
+
+                //Create thread to run splash window.
+                thread = new System.Threading.Thread(() =>
                 {
+                    //Get an instance of the splash window.
                     windowLoading = GetInstance();
+                    //If we have an owner set the start location manually
                     if (_owner != null)
                     {
                         windowLoading.WindowStartupLocation = System.Windows.WindowStartupLocation.Manual;
@@ -72,25 +105,38 @@ namespace Helpers.WPFHelpers.WindowHelpers
                     }
                     else
                     {
+                        //Otherwise start in the center of the screen.
                         windowLoading.WindowStartupLocation = System.Windows.WindowStartupLocation.CenterOwner;
                     }
+                    //Get our dispatcher for use outside of this thread.
                     windowLoadingDispatcher = windowLoading.Dispatcher;
+                    //Set our event and run the dispatcher waiting for instructions.
                     reset.Set();
                     System.Windows.Threading.Dispatcher.Run();
 
                 });
-                t.IsBackground = true;
-                t.SetApartmentState(System.Threading.ApartmentState.STA);
-                t.Start();
+                thread.IsBackground = true;
+                //Set its apartment state to STA (So we can make a GUI on this thread).
+                thread.SetApartmentState(System.Threading.ApartmentState.STA);
+                //Start it!
+                thread.Start();
+                //Wait for the dispatcher to start.
                 reset.WaitOne();
-            }
-            windowLoadingDispatcher.Invoke(new Action(() =>
+                //Show the window.
+                windowLoadingDispatcher.Invoke(new Action(() =>
                 windowLoading.Show()));
+            }
         }
 
         public void CloseLoadingWindow()
         {
+            //Close our window using the dispatcher.
             windowLoadingDispatcher.Invoke(new Action(() => windowLoading.Close()));
+            //Shuw down the dispatcher
+            windowLoadingDispatcher.InvokeShutdown();
+            //Join the threads.
+            thread.Join();
+            //Clean up.
             windowLoading = null;
             windowLoadingDispatcher = null;
         }
