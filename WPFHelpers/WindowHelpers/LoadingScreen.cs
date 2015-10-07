@@ -124,11 +124,11 @@ namespace Helpers.WPFHelpers.WindowHelpers
                         windowLoading.WindowStartupLocation = System.Windows.WindowStartupLocation.CenterOwner;
                     }
                     //Get our dispatcher for use outside of this thread.
-                    windowLoadingDispatcher = windowLoading.Dispatcher;
+                    windowLoadingDispatcher = System.Windows.Threading.Dispatcher.CurrentDispatcher;
                     //Set our event and run the dispatcher waiting for instructions.
                     reset.Set();
                     System.Windows.Threading.Dispatcher.Run();
-
+                    
                 });
                 //Name our thread.  Make it background
                 thread.Name = _ThreadName;
@@ -139,9 +139,9 @@ namespace Helpers.WPFHelpers.WindowHelpers
                 thread.Start();
                 //Wait for the dispatcher to start.
                 reset.WaitOne();
+                windowLoadingDispatcher.Invoke(new Action(() => System.Threading.Thread.Sleep(0)));
                 //Show the window.
-                windowLoadingDispatcher.Invoke(new Action(() =>
-                windowLoading.Show()));
+                windowLoadingDispatcher.Invoke(new Action(() => windowLoading.Show()));
             }
         }
 
