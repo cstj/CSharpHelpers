@@ -126,6 +126,8 @@ namespace Helpers.WPFHelpers.WindowHelpers
                     //Get our dispatcher for use outside of this thread.
                     windowLoadingDispatcher = System.Windows.Threading.Dispatcher.CurrentDispatcher;
                     //Set our event and run the dispatcher waiting for instructions.
+                    windowLoading.Closed += (s, a) => windowLoading.Dispatcher.InvokeShutdown();
+
                     reset.Set();
                     System.Windows.Threading.Dispatcher.Run();
                     
@@ -149,10 +151,10 @@ namespace Helpers.WPFHelpers.WindowHelpers
         {
             //Close our window using the dispatcher.
             windowLoadingDispatcher.Invoke(new Action(() => windowLoading.Close()));
-            //Shuw down the dispatcher
-            windowLoadingDispatcher.InvokeShutdown();
+
             //Join the threads.
             thread.Join();
+
             //Clean up.
             windowLoading = null;
             windowLoadingDispatcher = null;
