@@ -132,14 +132,14 @@ namespace Helpers.MVVMHelpers
             {
                 itemList.Add(this);
                 //If we only want the first item, return it
-                if (OnlyFirst) return itemList; 
+                if (OnlyFirst) return itemList;
             }
 
             //What children are selected?
             var childSelected = from i in this.Children
                                 where i.IsSelected
                                 select i;
-            
+
             //if we have a return and we only want the first return the frist child found
             if (OnlyFirst && childSelected != null)
             {
@@ -173,8 +173,8 @@ namespace Helpers.MVVMHelpers
         #endregion
         #region ColumnData Property
         public const string ColumnDataName = "ColumnData";
-        private Dictionary<string,string> _ColumnData;
-        public Dictionary<string,string> ColumnData
+        private Dictionary<string, string> _ColumnData;
+        public Dictionary<string, string> ColumnData
         {
             get { return _ColumnData; }
             set
@@ -313,7 +313,7 @@ namespace Helpers.MVVMHelpers
         }
         #endregion
         #endregion
-        
+
         /// <summary>
         /// Expand / Collapse all this items children
         /// </summary>
@@ -327,7 +327,6 @@ namespace Helpers.MVVMHelpers
                 foreach (ListItem<T> l in Children) l.ExpandCollapseCollection(Expanded, ExpandChildren);
             }
         }
-
 
         #region Events
         #region Double Click
@@ -360,77 +359,6 @@ namespace Helpers.MVVMHelpers
             OnClick(new ListItemEventArgs<T>(this));
         }
         #endregion
-        #endregion
-    }
-
-    /// <summary>
-    /// A List Item for use in WPF data binding.  It stores a number of usefull attributes such as selection, font weight etc.
-    /// It also is capable of being used in tree's using the children attribute.
-    /// This list item also stores extra data associated wiht the item.
-    /// </summary>
-    /// <typeparam name="T">The type of object that this list item contains.</typeparam>
-    /// <typeparam name="ExtraT">The type of extra data associated wiht this list item.</typeparam>
-    public class ListItem<T, ExtraT> : ListItem<T>
-    {
-        public override event PropertyChangedEventHandler PropertyChanged;
-
-        protected override void OnPropertyChanged(object sender, string name)
-        {
-            VerifyPropertyName(name);
-            PropertyChangedEventHandler handler = PropertyChanged;
-            if (handler != null)
-            {
-                handler(sender, new PropertyChangedEventArgs(name));
-            }
-        }
-
-        public override void VerifyPropertyName(string propertyName)
-        {
-            if (propertyName != ChildrenName)
-            {
-                var myType = this.GetType();
-                if (myType.GetProperty(propertyName) == null)
-                {
-                    throw new ArgumentException("Property not found", propertyName);
-                }
-            }
-        }
-
-        #region ExtraData Property
-        public const string ExtraDataName = "ExtraData";
-        private ExtraT _ExtraData;
-        public ExtraT ExtraData
-        {
-            get { return _ExtraData; }
-            set
-            {
-                if (_ExtraData != null)
-                {
-                    if (_ExtraData.Equals(value)) return;
-                }
-                _ExtraData = value;
-                OnPropertyChanged(ExtraDataName);
-            }
-        }
-
-        private ObservableCollection<ListItem<T, ExtraT>> _Children;
-        new public ObservableCollection<ListItem<T, ExtraT>> Children
-        {
-            get { return _Children; }
-            set
-            {
-                if (_Children == value) return;
-                if (_Children != null)
-                {
-                    foreach (var i in _Children) i.PropertyChanged -= OnChildPropertyChanged;
-                    Children.CollectionChanged -= Children_CollectionChanged;
-                }
-                _Children = value;
-                foreach (var i in _Children) i.PropertyChanged += OnChildPropertyChanged;
-                Children.CollectionChanged += Children_CollectionChanged;
-                OnPropertyChanged(ChildrenName);
-            }
-        }
         #endregion
     }
 }
