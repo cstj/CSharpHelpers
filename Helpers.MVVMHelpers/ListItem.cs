@@ -203,6 +203,21 @@ namespace Helpers.MVVMHelpers
         }
         #endregion
 
+        #region Parent Property
+        public const string ParentName = "Parent";
+        private ListItem<T> _Parent;
+        public ListItem<T> Parent
+        {
+            get { return _Parent; }
+            set
+            {
+                if (_Parent == value) return;
+                _Parent = value;
+                OnPropertyChanged(ParentName);
+            }
+        }
+        #endregion
+
         #region Children Property
         public const string ChildrenName = "Children";
         private ObservableCollection<ListItem<T>> _Children;
