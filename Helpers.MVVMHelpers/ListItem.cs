@@ -231,9 +231,14 @@ namespace Helpers.MVVMHelpers
 
         public void Children_CollectionChanged(object sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
         {
-            if (e.OldItems != null) foreach (var i in e.OldItems.Cast<ListItem<T>>()) i.PropertyChanged -= PropertyChanged;
-            if (e.NewItems != null) foreach (var i in e.NewItems.Cast<ListItem<T>>()) i.PropertyChanged += PropertyChanged;
+            if (e.OldItems != null) foreach (var i in e.OldItems.Cast<ListItem<T>>()) i.PropertyChanged -= Child_PropertyChanged;
+            if (e.NewItems != null) foreach (var i in e.NewItems.Cast<ListItem<T>>()) i.PropertyChanged += Child_PropertyChanged;
             OnPropertyChanged(ChildrenName);
+        }
+
+        private void Child_PropertyChanged(object sender, PropertyChangedEventArgs e)
+        {
+            OnChildPropertyChanged(sender, new PropertyChangedEventArgs(ChildrenName));
         }
         #endregion
         #region FontWeight Property
