@@ -223,7 +223,10 @@ namespace Helpers.MVVMHelpers
         private ObservableCollection<ListItem<T>> _Children;
         public ObservableCollection<ListItem<T>> Children
         {
-            get { return _Children; }
+            get {
+                if (_Children == null) _Children = new ObservableCollection<ListItem<T>>();
+                return _Children; 
+            }
             set
             {
                 if (_Children == value) return;
