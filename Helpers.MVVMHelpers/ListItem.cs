@@ -32,26 +32,21 @@ namespace Helpers.MVVMHelpers
 
         protected virtual void OnPropertyChanged(object sender, string name)
         {
-            VerifyPropertyName(name);
+            OnPropertyChanged(sender, new PropertyChangedEventArgs(name));
+        }
+
+        protected virtual void OnPropertyChanged(object sender, PropertyChangedEventArgs args)
+        {
             PropertyChangedEventHandler handler = PropertyChanged;
             if (handler != null)
             {
-                handler(sender, new PropertyChangedEventArgs(name));
+                handler(sender, args);
             }
         }
 
         protected void OnPropertyChanged(string name)
         {
             OnPropertyChanged(this, name);
-        }
-
-        public virtual void VerifyPropertyName(string propertyName)
-        {
-            var myType = this.GetType();
-            if (myType.GetProperty(propertyName) == null)
-            {
-                throw new ArgumentException("Property not found", propertyName);
-            }
         }
         #endregion
 
@@ -224,7 +219,10 @@ namespace Helpers.MVVMHelpers
         public ObservableCollection<ListItem<T>> Children
         {
             get {
-                if (_Children == null) _Children = new ObservableCollection<ListItem<T>>();
+                if (_Children == null)
+                {
+                    Children = new ObservableCollection<ListItem<T>>();
+                }
                 return _Children; 
             }
             set
@@ -232,19 +230,14 @@ namespace Helpers.MVVMHelpers
                 if (_Children == value) return;
                 if (_Children != null)
                 {
-                    foreach (var i in _Children) i.PropertyChanged -= OnChildPropertyChanged;
                     Children.CollectionChanged -= Children_CollectionChanged;
+                    foreach (var i in _Children) i.PropertyChanged -= Child_PropertyChanged;
                 }
                 _Children = value;
-                foreach (var i in _Children) i.PropertyChanged += OnChildPropertyChanged;
                 Children.CollectionChanged += Children_CollectionChanged;
+                foreach (var i in _Children) i.PropertyChanged += Child_PropertyChanged;
                 OnPropertyChanged(ChildrenName);
             }
-        }
-
-        protected virtual void OnChildPropertyChanged(object sender, PropertyChangedEventArgs e)
-        {
-            OnPropertyChanged(sender, ChildrenName);
         }
 
         public void Children_CollectionChanged(object sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
@@ -256,9 +249,10 @@ namespace Helpers.MVVMHelpers
 
         private void Child_PropertyChanged(object sender, PropertyChangedEventArgs e)
         {
-            OnChildPropertyChanged(sender, new PropertyChangedEventArgs(ChildrenName));
+            OnPropertyChanged(sender, new PropertyChangedEventArgs(ChildrenName));
         }
         #endregion
+
         #region FontWeight Property
         public const string FontWeightName = "FontWeight";
         private string _FontWeight;
