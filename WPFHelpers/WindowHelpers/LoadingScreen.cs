@@ -17,6 +17,8 @@ namespace Helpers.WPFHelpers.WindowHelpers
         System.Windows.Threading.Dispatcher windowLoadingDispatcher;
         private bool disposed = false;
         private System.Windows.Window _owner;
+        double ParentHor = 0;
+        double ParentVer = 0;
 
         System.Threading.Thread thread;
         string _ThreadName;
@@ -92,8 +94,7 @@ namespace Helpers.WPFHelpers.WindowHelpers
             if (windowLoading == null)
             {
                 //If we have a parent get its center.
-                double ParentHor = 0;
-                double ParentVer = 0;
+                
                 if (_owner != null)
                 {
                     ParentHor = _owner.Left + (_owner.Width / 2);
@@ -108,29 +109,7 @@ namespace Helpers.WPFHelpers.WindowHelpers
                 //Create thread to run splash window.
                 thread = new System.Threading.Thread(() =>
                 {
-                    //Get an instance of the splash window.
-                    windowLoading = GetInstance();
-                    //If we have an owner set the start location manually
-                    if (_owner != null)
-                    {
-                        windowLoading.WindowStartupLocation = System.Windows.WindowStartupLocation.Manual;
-                        //Set to center of parent window
-                        windowLoading.Top = ParentVer - (windowLoading.Height / 2);
-                        windowLoading.Left = ParentHor - (windowLoading.Width / 2);
-                    }
-                    else
-                    {
-                        //Otherwise start in the center of the screen.
-                        windowLoading.WindowStartupLocation = System.Windows.WindowStartupLocation.CenterOwner;
-                    }
-                    //Get our dispatcher for use outside of this thread.
-                    windowLoadingDispatcher = System.Windows.Threading.Dispatcher.CurrentDispatcher;
-                    //Set our event and run the dispatcher waiting for instructions.
-                    windowLoading.Closed += (s, a) => windowLoading.Dispatcher.InvokeShutdown();
-
-                    reset.Set();
-                    System.Windows.Threading.Dispatcher.Run();
-                    
+                    InitLoadingWindow(reset);
                 });
                 //Name our thread.  Make it background
                 thread.Name = _ThreadName;
@@ -141,16 +120,53 @@ namespace Helpers.WPFHelpers.WindowHelpers
                 thread.Start();
                 //Wait for the dispatcher to start.
                 reset.WaitOne();
-                windowLoadingDispatcher.Invoke(new Action(() => System.Threading.Thread.Sleep(0)));
+                System.Threading.Thread.Sleep(100);
                 //Show the window.
-                windowLoadingDispatcher.Invoke(new Action(() => windowLoading.Show()));
+                windowLoadingDispatcher.Invoke(new Action(() =>
+                    {
+                        windowLoading.Show();
+                    }));
             }
+        }
+
+        private void InitLoadingWindow(System.Threading.ManualResetEvent reset)
+        {
+            System.Threading.SynchronizationContext.SetSynchronizationContext(new System.Windows.Threading.DispatcherSynchronizationContext(System.Windows.Threading.Dispatcher.CurrentDispatcher));
+
+            //Get an instance of the splash window.
+            windowLoading = GetInstance();
+            
+            //If we have an owner set the start location manually
+            if (_owner != null)
+            {
+                windowLoading.WindowStartupLocation = System.Windows.WindowStartupLocation.Manual;
+                //Set to center of parent window
+                windowLoading.Top = ParentVer - (windowLoading.Height / 2);
+                windowLoading.Left = ParentHor - (windowLoading.Width / 2);
+            }
+            else
+            {
+                //Otherwise start in the center of the screen.
+                windowLoading.WindowStartupLocation = System.Windows.WindowStartupLocation.CenterOwner;
+            }
+            
+            //Set our event and run the dispatcher waiting for instructions.
+            windowLoading.Closed += (s, a) => { System.Windows.Threading.Dispatcher.CurrentDispatcher.BeginInvokeShutdown(System.Windows.Threading.DispatcherPriority.Background); };
+            //Signal ready and run the dispatcher
+            reset.Set();
+
+            //Get our dispatcher for use outside of this thread and start it
+            windowLoadingDispatcher = System.Windows.Threading.Dispatcher.CurrentDispatcher;
+            System.Windows.Threading.Dispatcher.Run();
         }
 
         public void CloseLoadingWindow()
         {
             //Close our window using the dispatcher.
-            windowLoadingDispatcher.Invoke(new Action(() => windowLoading.Close()));
+            windowLoadingDispatcher.Invoke(new Action(() =>
+            {
+                windowLoading.Close();
+            }));
 
             //Join the threads.
             thread.Join();
