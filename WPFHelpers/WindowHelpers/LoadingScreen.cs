@@ -125,6 +125,8 @@ namespace Helpers.WPFHelpers.WindowHelpers
                 windowLoadingDispatcher.Invoke(new Action(() =>
                     {
                         windowLoading.Show();
+                        windowLoading.Activate();
+                        windowLoading.Focus();
                     }));
             }
         }
@@ -157,7 +159,8 @@ namespace Helpers.WPFHelpers.WindowHelpers
 
             //Get our dispatcher for use outside of this thread and start it
             windowLoadingDispatcher = System.Windows.Threading.Dispatcher.CurrentDispatcher;
-            System.Windows.Threading.Dispatcher.Run();
+            windowLoadingDispatcher.Invoke(new Action(() => { System.Windows.Threading.Dispatcher.Run(); }));
+            
         }
 
         public void CloseLoadingWindow()
