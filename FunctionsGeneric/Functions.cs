@@ -2,9 +2,9 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace HelpersLibrary
+namespace HelpersLibrary.Functions
 {
-    public static class Functions
+    public static class General
     {
         public static string ExceptionToString(Exception e)
         {
