@@ -56,32 +56,35 @@ namespace Helpers
 
         public static HashSet<Principal> SearchForUser(string domain, string search)
         {
-            if (search.Length >= 3)
+            if (search != null)
             {
-                System.Collections.Concurrent.ConcurrentDictionary<Guid, Principal> tmp = new System.Collections.Concurrent.ConcurrentDictionary<Guid, Principal>();
-                string strSearch = "*" + search + "*";
-
-                PrincipalContext ctx = new PrincipalContext(ContextType.Domain, domain);
-                List<UserPrincipal> searchPrinciples = new List<UserPrincipal>();
-                searchPrinciples.Add(new UserPrincipal(ctx) { DisplayName = strSearch });
-                searchPrinciples.Add(new UserPrincipal(ctx) { SamAccountName = strSearch });
-                searchPrinciples.Add(new UserPrincipal(ctx) { MiddleName = strSearch });
-                searchPrinciples.Add(new UserPrincipal(ctx) { GivenName = strSearch });
-                searchPrinciples.Add(new UserPrincipal(ctx) { Surname = strSearch });
-                searchPrinciples.Add(new UserPrincipal(ctx) { UserPrincipalName = strSearch });
-
-                System.Threading.Tasks.Parallel.ForEach(searchPrinciples, p =>
+                if (search.Length >= 3)
                 {
-                    PrincipalSearcher sch = new PrincipalSearcher(p);
-                    foreach (var found in sch.FindAll())
+                    System.Collections.Concurrent.ConcurrentDictionary<Guid, Principal> tmp = new System.Collections.Concurrent.ConcurrentDictionary<Guid, Principal>();
+                    string strSearch = "*" + search + "*";
+
+                    PrincipalContext ctx = new PrincipalContext(ContextType.Domain, domain);
+                    List<UserPrincipal> searchPrinciples = new List<UserPrincipal>();
+                    searchPrinciples.Add(new UserPrincipal(ctx) { DisplayName = strSearch });
+                    searchPrinciples.Add(new UserPrincipal(ctx) { SamAccountName = strSearch });
+                    searchPrinciples.Add(new UserPrincipal(ctx) { MiddleName = strSearch });
+                    searchPrinciples.Add(new UserPrincipal(ctx) { GivenName = strSearch });
+                    searchPrinciples.Add(new UserPrincipal(ctx) { Surname = strSearch });
+                    searchPrinciples.Add(new UserPrincipal(ctx) { UserPrincipalName = strSearch });
+
+                    System.Threading.Tasks.Parallel.ForEach(searchPrinciples, p =>
                     {
-                        if (found.Guid.HasValue)
+                        PrincipalSearcher sch = new PrincipalSearcher(p);
+                        foreach (var found in sch.FindAll())
                         {
-                            if (!tmp.Keys.Contains(found.Guid.Value)) tmp.TryAdd(found.Guid.Value, found);
+                            if (found.Guid.HasValue)
+                            {
+                                if (!tmp.Keys.Contains(found.Guid.Value)) tmp.TryAdd(found.Guid.Value, found);
+                            }
                         }
-                    }
-                });
-                return new HashSet<Principal>(tmp.Values);
+                    });
+                    return new HashSet<Principal>(tmp.Values);
+                }
             }
             return new HashSet<Principal>();
         }
