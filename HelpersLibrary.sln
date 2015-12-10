@@ -17,6 +17,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Helpers.MVVMHelpers", "Help
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "HelperExamples", "HelperExamples\HelperExamples.csproj", "{49130F6F-D9DB-4FBD-BCD8-A159DF5149E9}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ConfigSectionEncDec", "ConfigSectionEncDec\ConfigSectionEncDec.csproj", "{6FA6EF94-63EF-43A5-B9B6-B38BF1693AC5}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -55,6 +57,10 @@ Global
 		{49130F6F-D9DB-4FBD-BCD8-A159DF5149E9}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{49130F6F-D9DB-4FBD-BCD8-A159DF5149E9}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{49130F6F-D9DB-4FBD-BCD8-A159DF5149E9}.Release|Any CPU.Build.0 = Release|Any CPU
+		{6FA6EF94-63EF-43A5-B9B6-B38BF1693AC5}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{6FA6EF94-63EF-43A5-B9B6-B38BF1693AC5}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{6FA6EF94-63EF-43A5-B9B6-B38BF1693AC5}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{6FA6EF94-63EF-43A5-B9B6-B38BF1693AC5}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
