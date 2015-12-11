@@ -3,8 +3,6 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 2012
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Helpers.WPFHelpers", "WPFHelpers\Helpers.WPFHelpers.csproj", "{C2729616-D97B-4C2E-8054-0FB74407C5D3}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Helpers.DataTypesMVVMLight", "DataTypesMVVMLight\Helpers.DataTypesMVVMLight.csproj", "{934A1213-2119-4059-9DA3-6D07597D6199}"
-EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Helpers.FunctionsGeneric", "FunctionsGeneric\Helpers.FunctionsGeneric.csproj", "{79941F9B-15FC-4345-9532-7E8947BB5869}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Helpers.DataTypesGeneric", "DataTypesGeneric\Helpers.DataTypesGeneric.csproj", "{6FE3FCAF-83CB-4E3A-8F05-B570B3856E19}"
@@ -29,10 +27,6 @@ Global
 		{C2729616-D97B-4C2E-8054-0FB74407C5D3}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{C2729616-D97B-4C2E-8054-0FB74407C5D3}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{C2729616-D97B-4C2E-8054-0FB74407C5D3}.Release|Any CPU.Build.0 = Release|Any CPU
-		{934A1213-2119-4059-9DA3-6D07597D6199}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{934A1213-2119-4059-9DA3-6D07597D6199}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{934A1213-2119-4059-9DA3-6D07597D6199}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{934A1213-2119-4059-9DA3-6D07597D6199}.Release|Any CPU.Build.0 = Release|Any CPU
 		{79941F9B-15FC-4345-9532-7E8947BB5869}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{79941F9B-15FC-4345-9532-7E8947BB5869}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{79941F9B-15FC-4345-9532-7E8947BB5869}.Release|Any CPU.ActiveCfg = Release|Any CPU
