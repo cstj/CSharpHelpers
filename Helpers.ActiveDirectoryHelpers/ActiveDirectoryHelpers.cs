@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.DirectoryServices.AccountManagement;
+using System.DirectoryServices;
 
 namespace Helpers
 {
@@ -54,39 +55,26 @@ namespace Helpers
             return new List<string>();
         }
 
-        public static HashSet<Principal> SearchForUser(string domain, string search)
+        public static HashSet<DirectoryEntry> SearchForUser(string domain, string search)
         {
+            var tmp = new HashSet<DirectoryEntry>();
             if (search != null)
             {
                 if (search.Length >= 3)
                 {
-                    System.Collections.Concurrent.ConcurrentDictionary<Guid, Principal> tmp = new System.Collections.Concurrent.ConcurrentDictionary<Guid, Principal>();
-                    string strSearch = "*" + search + "*";
+                    System.DirectoryServices.DirectoryEntry de = new System.DirectoryServices.DirectoryEntry("LDAP://" + domain);
+                    System.DirectoryServices.DirectorySearcher directorySearcher = new System.DirectoryServices.DirectorySearcher(de);
+                    directorySearcher.Filter = "(&(|(objectclass=user)(objectclass=computer))(|(samaccountname=" + search + ")(displayname=" + search + ")(sn=" + search + ")(mail=" + search + ")))";
+                    System.DirectoryServices.SearchResultCollection srCollection = directorySearcher.FindAll();
 
-                    PrincipalContext ctx = new PrincipalContext(ContextType.Domain, domain);
-                    List<UserPrincipal> searchPrinciples = new List<UserPrincipal>();
-                    searchPrinciples.Add(new UserPrincipal(ctx) { DisplayName = strSearch });
-                    searchPrinciples.Add(new UserPrincipal(ctx) { SamAccountName = strSearch });
-                    searchPrinciples.Add(new UserPrincipal(ctx) { MiddleName = strSearch });
-                    searchPrinciples.Add(new UserPrincipal(ctx) { GivenName = strSearch });
-                    searchPrinciples.Add(new UserPrincipal(ctx) { Surname = strSearch });
-                    searchPrinciples.Add(new UserPrincipal(ctx) { UserPrincipalName = strSearch });
-
-                    System.Threading.Tasks.Parallel.ForEach(searchPrinciples, p =>
+                    System.Threading.Tasks.Parallel.For(0, srCollection.Count, (i) =>
                     {
-                        PrincipalSearcher sch = new PrincipalSearcher(p);
-                        foreach (var found in sch.FindAll())
-                        {
-                            if (found.Guid.HasValue)
-                            {
-                                if (!tmp.Keys.Contains(found.Guid.Value)) tmp.TryAdd(found.Guid.Value, found);
-                            }
-                        }
+                        var item = srCollection[i].GetDirectoryEntry();
+                        lock (tmp) tmp.Add(item);
                     });
-                    return new HashSet<Principal>(tmp.Values);
                 }
             }
-            return new HashSet<Principal>();
+            return tmp;
         }
     }
 }

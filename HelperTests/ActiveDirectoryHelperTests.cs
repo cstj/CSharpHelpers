@@ -82,5 +82,13 @@ namespace HelperTests
             value = Helpers.ActiveDirectoryHelpers.IsUserDomainMember(domain, userNameBad);
             Assert.IsFalse(value, "InValid Group Failed");
         }
+
+        [TestMethod]
+        public void SearchForUserTests()
+        {
+            Assert.IsTrue(Helpers.ActiveDirectoryHelpers.SearchForUser(domain, userNameBad).Count == 0);
+
+            Assert.IsTrue(Helpers.ActiveDirectoryHelpers.SearchForUser(domain, userName).Count > 0);
+        }
     }
 }
