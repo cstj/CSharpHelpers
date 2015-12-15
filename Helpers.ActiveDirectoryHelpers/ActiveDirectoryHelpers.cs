@@ -55,11 +55,12 @@ namespace Helpers
             return new List<string>();
         }
 
-        public static HashSet<DirectoryEntry> SearchForUser(string domain, string search)
+        public static List<DirectoryEntry> SearchForUser(string domain, string search)
         {
-            var tmp = new HashSet<DirectoryEntry>();
+            var tmp = new List<DirectoryEntry>();
             if (search != null)
             {
+                if (search.Substring(0, domain.Length) == domain) search = search.Substring(domain.Length + 1);
                 if (search.Length >= 3)
                 {
                     System.DirectoryServices.DirectoryEntry de = new System.DirectoryServices.DirectoryEntry("LDAP://" + domain);
