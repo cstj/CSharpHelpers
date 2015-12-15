@@ -35,7 +35,7 @@ namespace HelperExamples
             ex.Data["Key 1"] = "Data 1";
             ex.Data["Key 2"] = "Data 2";
             ex.Data["Key 3"] = "Data 3";
-            WPFHelpers.ExceptionsViewer ev = new WPFHelpers.ExceptionsViewer(ex, "Error");
+            Helpers.WPFHelpers.WindowHelpers.ExceptionsViewer ev = new Helpers.WPFHelpers.WindowHelpers.ExceptionsViewer(ex, "Error");
 
         }
     }
