@@ -60,7 +60,11 @@ namespace Helpers
             var tmp = new List<DirectoryEntry>();
             if (search != null)
             {
-                if (search.Substring(0, domain.Length) == domain) search = search.Substring(domain.Length + 1);
+                //Remove domain if they have put it in the search string
+                if (search.Length > domain.Length)
+                {
+                    if (search.Substring(0, domain.Length) == domain) search = search.Substring(domain.Length + 1);
+                }
                 if (search.Length >= 3)
                 {
                     System.DirectoryServices.DirectoryEntry de = new System.DirectoryServices.DirectoryEntry("LDAP://" + domain);
