@@ -61,6 +61,11 @@ namespace Helpers.MVVMHelpers
         #endregion
 
         #region Operators
+        public override string ToString()
+        {
+            return Title;
+        }
+
         public override bool Equals(object obj)
         {
             //If null ira not equal
